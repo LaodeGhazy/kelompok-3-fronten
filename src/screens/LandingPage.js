@@ -24,14 +24,14 @@ const LandingPage = ({ navigation }) => {
       <View style={styles.card}>
           <TouchableOpacity
             style={styles.loginButton}
-            onPress={() => navigation.navigate('ArenaGame')} // Asumsi ada halaman Login
+            onPress={() => navigation.navigate('Login')} // Asumsi ada halaman Login
           >
             <Text style={styles.buttonText}>LOGIN</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.registerButton}
-            onPress={() => navigation.navigate('Register')} // Asumsi ada halaman Register
+            onPress={() => navigation.navigate('ArenaGame')} // Asumsi ada halaman Register
           >
             <Text style={styles.registerButtonText}>REGISTER</Text>
           </TouchableOpacity>

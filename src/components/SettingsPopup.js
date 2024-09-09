@@ -1,7 +1,22 @@
 import React from 'react';
-import { Modal, View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
+import { Modal, View, StyleSheet, TouchableOpacity, Text, BackHandler } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const PausePopup = ({ visible, onResume, onRestart, onExit }) => {
+const SettingsPopup = ({ visible, onResume, onRestart, onExit }) => {
+  const navigation = useNavigation();
+
+  const handleExitGame = () => {
+    BackHandler.exitApp(); // Close the app
+  };
+
+  const handleLogout = () => {
+    // Reset the navigation stack to the Login screen
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
+  };
+
   return (
     <Modal
       transparent={true}
@@ -12,13 +27,13 @@ const PausePopup = ({ visible, onResume, onRestart, onExit }) => {
       <View style={styles.overlay}>
         <View style={styles.popup}>
           <TouchableOpacity style={styles.card} onPress={onResume}>
-            <Text style={styles.buttonText}>Resume</Text>
+            <Text style={styles.buttonText}>History</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.card} onPress={onRestart}>
-            <Text style={styles.buttonText}>Restart</Text>
+          <TouchableOpacity style={styles.card} onPress={handleExitGame}>
+            <Text style={styles.buttonText}>ExitGame</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.exitCard} onPress={onExit}>
-            <Text style={styles.buttonText}>Home</Text>
+          <TouchableOpacity style={styles.exitCard} onPress={handleLogout}>
+            <Text style={styles.buttonText}>Logout</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -51,7 +66,7 @@ const styles = StyleSheet.create({
   exitCard: {
     width: '100%',
     padding: 15,
-    backgroundColor: '#49A472',
+    backgroundColor: '#EF5757',
     borderRadius: 10,
     marginTop: 10, // Space between Restart and Exit
     alignItems: 'center',
@@ -62,4 +77,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PausePopup;
+export default SettingsPopup;

@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import LandingPage from "./src/screens/LandingPage";
 import ArenaGame from "./src/screens/ArenaGame";
+import Login from "./src/screens/Login";
 
 const Stack = createStackNavigator();
 
@@ -18,8 +19,13 @@ export default function App() {
         <Stack.Screen
           name="ArenaGame"
           component={ArenaGame}
-          options={{ title: "", headerTransparent: true, }}
+          options={{ headerShown: false }}
         />
+        <Stack.Screen
+         name="Login"
+         component={Login}
+         options={{ headerShown: false }}
+       />
       </Stack.Navigator>
     </NavigationContainer>
   );
