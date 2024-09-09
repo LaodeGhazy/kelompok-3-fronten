@@ -9,12 +9,58 @@ import {
   Dimensions
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { FIREBASE_AUTH, googleProvider } from "../../firebase";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, signOut  } from "firebase/auth";
 
 const { width, height } = Dimensions.get('window');
 
 const Login = () => {
+  const [user, setUser] = useState(null);
   const [email, setEmail] = useState('');
+  const [ password, setPassword ] = useState('');
   const [isEmailValid, setIsEmailValid] = useState(true);
+  const [ loading, setLoading] = useState(false);
+  const FbAuth = FIREBASE_AUTH;
+
+
+  const SignIn = async () => {
+    setLoading(true);
+    try{
+        const response = await signInWithEmailAndPassword( FbAuth, email, password);
+        console.log(response);
+        navigation.navigate('ArenaGame');
+    }catch(error){
+        console.log(error, typeof email, typeof password);
+        alert("login error: " +error.message);
+    }finally {
+        setLoading(false);
+    }
+};
+const googleSignin = async () => {
+  try {
+      if(user) {
+          await signOut(FbAuth)
+      }else {
+          await signInWithPopup(FbAuth, googleProvider);
+      } 
+  }catch(error) {
+      console.error(error);
+  }
+};
+
+const SignUp = async () => {
+    setLoading(true);
+    try{
+        const response = await createUserWithEmailAndPassword( FbAuth,email, password);
+        console.log("resp: ", response);
+        navigation.navigate('LandingPage');
+    }catch(error){
+        console.log(error, email, password);
+        alert("signup error: " +error.message);
+    }finally {
+        setLoading(false);
+    }
+};
 
   const navigation = useNavigation(); // Initialize useNavigation
 
@@ -51,17 +97,18 @@ const Login = () => {
         placeholderTextColor="#C4C4C4"
         style={[styles.input, !isEmailValid && styles.invalidInput]}
         value={email}
-        onChangeText={validateEmail}
+        onChangeText={(text) => setEmail(text)}
       />
       <TextInput
         placeholder="Enter Your Password"
         placeholderTextColor="#C4C4C4"
         secureTextEntry
         style={styles.input}
+        onChangeText ={(text) => setPassword(text)}
       />
 
       {/* Login Button */}
-      <TouchableOpacity style={styles.loginButton}>
+      <TouchableOpacity style={styles.loginButton} onPress={() => SignIn()}>
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
 
@@ -73,7 +120,7 @@ const Login = () => {
       </View>
 
       {/* Google Login Button */}
-      <TouchableOpacity style={styles.googleButton}>
+      <TouchableOpacity style={styles.googleButton} onPress={() => googleSignin()}>
         <Image source={require('../assets/img_google.png')} style={styles.googleIcon} />
         <Text style={styles.googleButtonText}>Continue with Google</Text>
       </TouchableOpacity>
