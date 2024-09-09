@@ -117,7 +117,12 @@ const ArenaGame = () => {
 
   // Exit the game
   const handleExit = () => {
-    console.log("Exit the game");
+    setPlayerScore(0);
+    setComputerScore(0);
+    setIsModalVisible(false);
+    setIsPausePopupVisible(false); // Hide the PausePopup
+    setIsPlayButtonPressed(false); // Reset the Play button
+    setIsScoreVisible(false); // Hide the score
   };
 
   return (
@@ -236,7 +241,7 @@ const ArenaGame = () => {
         visible={isModalVisible}
         onPlayAgain={handlePlayAgain}
         onHistory={handleHistory}
-        onExit={handleExit}
+        onExit={handleExit} // Pass handleExit here
         isPlayerWin={isPlayerWin}
       />
 
