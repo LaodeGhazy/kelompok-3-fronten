@@ -9,7 +9,7 @@ import {
   Dimensions
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-import { FIREBASE_AUTH, googleProvider } from "../../firebase";
+import { FIREBASE_AUTH, auth, googleProvider } from "../../firebase";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, signOut  } from "firebase/auth";
 
 const { width, height } = Dimensions.get('window');
