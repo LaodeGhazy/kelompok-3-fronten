@@ -24,6 +24,6 @@ export const FIREBASE_AUTH = getAuth(FIREBASE_APP);
 export const FIREBASE_DB = getFirestore(FIREBASE_APP); 
 
 export const googleProvider = new GoogleAuthProvider();
-export const db = getFirestore(app);
+export const db = getFirestore(FIREBASE_APP);
 
 
