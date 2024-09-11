@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import HistoryItem from "../components/historyItem";
 import { Ionicons } from "@expo/vector-icons";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../../firebase";
 
 // import RegisterScreen from "./RegisterScreen";
@@ -32,8 +32,10 @@ export default function HistoryScreen() {
       if (docSnapshot.exists) {
         const subcollectionRef = collection(parentDocRef, subcollectionName);
 
+        const subcollectionQuery = query(subcollectionRef, orderBy('date', 'desc'));
+
         const fetchedGames = [];
-        const subcollectionQuerySnapshot = await getDocs(subcollectionRef);
+        const subcollectionQuerySnapshot = await getDocs(subcollectionQuery);
         subcollectionQuerySnapshot.forEach((subdoc) => {
           console.log(subdoc.id, "=>", subdoc.data());
           fetchedGames.push(subdoc.data());
