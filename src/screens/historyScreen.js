@@ -8,10 +8,8 @@ import {
   FlatList,
   Pressable,
 } from "react-native";
-import HistoryData from "../contants/history.json";
 import HistoryItem from "../components/historyItem";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebase/setup";
 
@@ -23,46 +21,36 @@ export default function HistoryScreen() {
 
   useEffect(() => {
     async function fetchData() {
-      const q = query(collection(db, "games"), where("score", "==", 3)); // Filter for games with score 3
-      const querySnapshot = await getDocs(q);
-      const fetchedGames = [];
-      querySnapshot.forEach((doc) => {
-        fetchedGames.push(doc.data()); // Add entire game data to the array
-      });
-      setGames(fetchedGames);
+      const parentCollectionName = "users";
+      const parentDocumentId = "lala"; // will change to current active user
+      const subcollectionName = "games";
+
+      const parentDocRef = doc(db, parentCollectionName, parentDocumentId);
+
+      const docSnapshot = await getDoc(parentDocRef);
+
+      if (docSnapshot.exists) {
+        const subcollectionRef = collection(parentDocRef, subcollectionName);
+
+        const fetchedGames = [];
+        const subcollectionQuerySnapshot = await getDocs(subcollectionRef);
+        subcollectionQuerySnapshot.forEach((subdoc) => {
+          console.log(subdoc.id, "=>", subdoc.data());
+          fetchedGames.push(subdoc.data());
+        });
+        setGames(fetchedGames);
+      } else {
+        console.log("Document does not exist");
+      }
     }
     fetchData();
-  }, [db]); // Dependency array to fetch data only when db changes
+  }, [db]);
 
-  console.log(games)
-
-  // const handleGoBack = () => {
-  //   navigation.goBack(); // Use navigation prop to navigate back
-  // };
-  
-  // / const history = () => {
-  //   // show history
-  //   const [games, setGames] = useState([]); // Initial empty array of game history
-  //   useEffect(() => {
-  //     async function fetchData() {
-  //       const q = query(collection(db, "games"), where("score", "==", 3));
-  //       const querySnapshot = await getDocs(q);
-  //       querySnapshot.forEach((doc) => {
-  //         // doc.data() is never undefined for query doc snapshots
-  //         console.log(doc.id, " => ", doc.data());
-  //         setGames(doc.data().score)
-  //       });
-  //     }
-  //     fetchData();
-  //   }, []);
-  // }
-
-  // const navigation = useNavigation();
   return (
     <View style={styles.screen}>
       <View style={styles.navbar}>
         <Pressable
-          // onPress={history} //tombol back
+          onPress={() => navigation.navigate("RegisterScreen")} //tombol back
         >
           <Ionicons
             name="arrow-back-circle-outline"
@@ -78,7 +66,6 @@ export default function HistoryScreen() {
       <View style={styles.historyContainer}>
         <FlatList
           data={games}
-          // keyExtractor={(item) => item.id}
           renderItem={({ item }) => <HistoryItem item={item} />}
         />
       </View>
