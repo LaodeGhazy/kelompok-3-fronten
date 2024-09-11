@@ -10,13 +10,13 @@ import {
 } from "react-native";
 import HistoryItem from "../components/historyItem";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
+
 // import RegisterScreen from "./RegisterScreen";
 
 export default function HistoryScreen() {
-  const navigation = useNavigation();
+  
   const [games, setGames] = useState([]); // Initial empty array of game history
 
   useEffect(() => {
