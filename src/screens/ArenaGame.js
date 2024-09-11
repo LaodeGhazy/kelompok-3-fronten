@@ -10,10 +10,9 @@ import {
 import GameOver from "../components/GameOver";
 import PausePopup from "../components/PausePopup";
 import SettingsPopup from "../components/SettingsPopup"; // Import SettingsPopup
-import { collection, query, where, getDocs, getDoc, doc } from 'firebase/firestore';
+import { collection, query, where, getDoc,setDoc, doc } from 'firebase/firestore';
 import { FIREBASE_AUTH, db } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-
 
 
 const ArenaGame = () => {
@@ -109,11 +108,35 @@ const ArenaGame = () => {
     if (playerScore === 3) {
       setIsPlayerWin(true);
       setIsModalVisible(true);
+      postToFirestore(playerScore, computerScore, true);
     } else if (computerScore === 3) {
       setIsPlayerWin(false);
       setIsModalVisible(true);
+      postToFirestore(playerScore, computerScore, false);
     }
   }, [playerScore, computerScore]);
+
+  // Post game data to Firestore
+  const postToFirestore = (playerScore, computerScore, gameResult) => {
+    const parentCollectionName = "users";
+    const parentDocumentId = "lala"; // will change to current active user
+    const subcollectionName = "games";
+
+    const parentDocRef = doc(db, parentCollectionName, parentDocumentId);
+    const subcollectionRef = collection(parentDocRef, subcollectionName);
+
+    const subdocumentData = {
+      score: playerScore,
+      computer_score: computerScore,
+      date: new Date().toISOString(),
+      result: gameResult,
+    };
+
+    const subdocRef = doc(subcollectionRef);
+    setDoc(subdocRef, subdocumentData);
+
+    console.log("Subdocument added successfully!");
+  };
 
   // Handle touchable item press
   const handleTouchablePress = (leftImage) => {
