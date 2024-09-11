@@ -10,8 +10,8 @@ import {
 } from "react-native";
 import HistoryItem from "../components/historyItem";
 import { Ionicons } from "@expo/vector-icons";
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "../firebase/setup";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
 
 // import RegisterScreen from "./RegisterScreen";
 
