@@ -9,8 +9,8 @@ import {
   Dimensions
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-import { FIREBASE_AUTH, auth, googleProvider } from "../../firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, signOut  } from "firebase/auth";
+import { FIREBASE_AUTH, googleProvider } from "../../firebase";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged  } from "firebase/auth";
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,6 +22,18 @@ const Login = () => {
   const [ loading, setLoading] = useState(false);
   const FbAuth = FIREBASE_AUTH;
 
+  // onAuthStateChanged(FbAuth, (user) => {
+  //   if (user) {
+  //     // User is signed in   
+  //     const uid = user.uid;
+  //     const email = user.email;
+  //     // ... other user properties
+  //     console.log('User signed in:', email);
+  //   } else {
+  //     // User is signed out
+  //     console.log('User is signed out');
+  //   }
+  // });
 
   const SignIn = async () => {
     setLoading(true);
@@ -30,7 +42,7 @@ const Login = () => {
         console.log(response);
         navigation.navigate('ArenaGame');
     }catch(error){
-        console.log(error, typeof email, typeof password);
+        console.log(error, email, password);
         alert("login error: " +error.message);
     }finally {
         setLoading(false);
@@ -48,19 +60,6 @@ const googleSignin = async () => {
   }
 };
 
-const SignUp = async () => {
-    setLoading(true);
-    try{
-        const response = await createUserWithEmailAndPassword( FbAuth,email, password);
-        console.log("resp: ", response);
-        navigation.navigate('LandingPage');
-    }catch(error){
-        console.log(error, email, password);
-        alert("signup error: " +error.message);
-    }finally {
-        setLoading(false);
-    }
-};
 
   const navigation = useNavigation(); // Initialize useNavigation
 
@@ -120,7 +119,7 @@ const SignUp = async () => {
       </View>
 
       {/* Google Login Button */}
-      <TouchableOpacity style={styles.googleButton} onPress={() => googleSignin()}>
+      <TouchableOpacity style={styles.googleButton} onPress={googleSignin}>
         <Image source={require('../assets/img_google.png')} style={styles.googleIcon} />
         <Text style={styles.googleButtonText}>Continue with Google</Text>
       </TouchableOpacity>

@@ -10,6 +10,11 @@ import {
 import GameOver from "../components/GameOver";
 import PausePopup from "../components/PausePopup";
 import SettingsPopup from "../components/SettingsPopup"; // Import SettingsPopup
+import { collection, query, where, getDocs, getDoc, doc } from 'firebase/firestore';
+import { FIREBASE_AUTH, db } from "../../firebase";
+import { onAuthStateChanged } from "firebase/auth";
+
+
 
 const ArenaGame = () => {
   const [isPlayButtonPressed, setIsPlayButtonPressed] = useState(false);
@@ -22,12 +27,38 @@ const ArenaGame = () => {
   );
   const [playerScore, setPlayerScore] = useState(0);
   const [computerScore, setComputerScore] = useState(0);
+  const [user_name, setUsername] = useState('');
+
 
   // Modal state
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isPlayerWin, setIsPlayerWin] = useState(false);
   const [isPausePopupVisible, setIsPausePopupVisible] = useState(false); // PausePopup state
   const [isSettingsPopupVisible, setIsSettingsPopupVisible] = useState(false); // SettingsPopup state
+  const auth = FIREBASE_AUTH;
+
+
+  //check user
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const userEmail = user.email;
+      console.log('test:', userEmail);
+
+      const userRef = doc(db, 'users', 'users_Data'); // Assuming your users collection is named "users"
+      console.log(userRef);
+      const docSnap = await getDoc(userRef);
+      console.log('snap:', docSnap.data().user_name);
+      if (docSnap.exists()) {
+        console.log("Document data:", docSnap.data());
+        const username = docSnap.data().user_name;
+        setUsername(username);
+      } else {
+        // docSnap.data() will be undefined in this case
+        console.log("No way!");
+      }
+
+    }
+  });
 
   // Handle Play button press
   const handlePlayButtonPress = () => {
@@ -157,7 +188,7 @@ const ArenaGame = () => {
           <View style={styles.scoreContainer}>
             <View style={styles.scoreLabelContainer}>
               <View style={styles.scoreBox}>
-                <Text style={styles.scoreText}>Player 1</Text>
+                <Text style={styles.scoreText}>{user_name}</Text>
               </View>
               <Text style={styles.scoreNumber}>{playerScore}</Text>
             </View>

@@ -23,7 +23,7 @@ export default function RegisterSukses() {
         <Text style = {styles.congrats}>CONGRATULATION!!!</Text>
         <Text style = {styles.noteSukses}>Your account has been successfully created</Text>
         <Pressable 
-          // onPress = {() => navigation.navigate('HomeScreen')}
+          onPress = {() => navigation.navigate('ArenaGame')}
           style = {styles.continueBtn}>
           <Text style = {styles.continue}>Continue</Text>
         </Pressable>

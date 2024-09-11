@@ -1,14 +1,21 @@
 import React, {useState} from 'react';
-import { TextInput, View, Pressable, StyleSheet, Text, ScrollView, Image, KeyboardAvoidingView, Platform } from "react-native";
+import { TextInput, View, Pressable, StyleSheet, Text, ScrollView, Image, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
+import { FIREBASE_AUTH } from "../../firebase";
+import { createUserWithEmailAndPassword, signOut, onAuthStateChanged  } from "firebase/auth";
+
 
 
 export default function RegisterScreen() {
+  const [username, setUsername] = useState('');
+  const [ password, setPassword ] = useState('');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [ loading, setLoading] = useState(false);
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const navigation = useNavigation()
+  const navigation = useNavigation();
+  const FbAuth = FIREBASE_AUTH;
   const handleSubmit = () => {
     if (emailRegex.test(email)) {
       navigation.navigate('RegisterSukses')
@@ -22,21 +29,33 @@ export default function RegisterScreen() {
       <Text style={styles.errorText}>{error}</Text>
     )
   }
+  
+  const SignUp = async () => {
+    setLoading(true);
+    try{
+        const response = await createUserWithEmailAndPassword( FbAuth, email, password);
+        navigation.navigate('RegisterSukses');
+        console.log("resp: ", response);
+    }catch(error){
+        console.log(error, email, password);
+        alert("signup error: " +error.message);
+    }finally {
+        setLoading(false);
+    }
+};
+const handleBackButtonPress = () => {
+  navigation.navigate('LandingPage'); // Navigate to the LandingPage screen
+};
+
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}>
         <View style={styles.screen}>
           <View style={styles.navbar}>
-            <Pressable
-              // onPress={() => navigation.navigate('HomeScreen')} 
-            >
-              <Ionicons 
-                name='arrow-back-circle-outline'
-                size={40}
-                color={'white'}
-              />
-            </Pressable>
+          <TouchableOpacity style={styles.backButton} onPress={handleBackButtonPress}>
+        <Image source={require('../assets/img_back_login.png')} style={styles.backIcon} />
+      </TouchableOpacity>
             <Text style={styles.navbarTitle}>Join With Us!</Text>
           </View>
           <View style={styles.containerAtas}>
@@ -51,6 +70,7 @@ export default function RegisterScreen() {
               <TextInput
                 style={styles.input}
                 placeholder='Enter your name'
+                onChangeText={(text) => setUsername(text)}
                 // onChangeText={onChangeText}
                 // value={text}
               />
@@ -59,7 +79,7 @@ export default function RegisterScreen() {
                   style={styles.inputEmail}
                   placeholder='Enter your email'
                   value={email}
-                  onChangeText={setEmail}
+                  onChangeText={(text) => setEmail(text)}
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
@@ -69,11 +89,11 @@ export default function RegisterScreen() {
                 style={styles.input}
                 placeholder='Enter your password'
                 secureTextEntry={true}
+                onChangeText ={(text) => setPassword(text)}
               />
               <Pressable 
-                onPress={handleSubmit}
                 style={styles.wrapperCustom}>
-                <Text style={styles.text}>Register</Text>
+                <Text style={styles.text} onPress={() => SignUp()}>Register</Text>
               </Pressable>
           </View>  
         </ScrollView>    
