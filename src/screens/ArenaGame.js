@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import GameOver from "../components/GameOver";
 import PausePopup from "../components/PausePopup";
 import SettingsPopup from "../components/SettingsPopup"; // Import SettingsPopup
-import { collection, query, where, getDoc,setDoc, doc } from 'firebase/firestore';
+import { collection, getDoc, setDoc, doc } from "firebase/firestore";
 import { FIREBASE_AUTH, db } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-
 
 const ArenaGame = () => {
   const [isPlayButtonPressed, setIsPlayButtonPressed] = useState(false);
@@ -26,8 +26,7 @@ const ArenaGame = () => {
   );
   const [playerScore, setPlayerScore] = useState(0);
   const [computerScore, setComputerScore] = useState(0);
-  const [user_name, setUsername] = useState('');
-
+  const [user_name, setUsername] = useState("");
 
   // Modal state
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -35,29 +34,6 @@ const ArenaGame = () => {
   const [isPausePopupVisible, setIsPausePopupVisible] = useState(false); // PausePopup state
   const [isSettingsPopupVisible, setIsSettingsPopupVisible] = useState(false); // SettingsPopup state
   const auth = FIREBASE_AUTH;
-
-
-  //check user
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      const userEmail = user.email;
-      console.log('test:', userEmail);
-
-      const userRef = doc(db, 'users', 'users_Data'); // Assuming your users collection is named "users"
-      console.log(userRef);
-      const docSnap = await getDoc(userRef);
-      console.log('snap:', docSnap.data().user_name);
-      if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
-        const username = docSnap.data().user_name;
-        setUsername(username);
-      } else {
-        // docSnap.data() will be undefined in this case
-        console.log("No way!");
-      }
-
-    }
-  });
 
   // Handle Play button press
   const handlePlayButtonPress = () => {
@@ -103,6 +79,38 @@ const ArenaGame = () => {
     }
   };
 
+  // handle onauthstatechange
+  useEffect(() => {
+    const stopListener = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userEmail = user.email;
+        const name = userEmail.split("@");
+        setUsername(name[0]);
+        console.log("test:", userEmail);
+        console.log(name[0]);
+
+        const docRef = doc(db, "users", user_name);
+        console.log(docRef);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists) {
+          console.log("Document does not exist, creating...");
+          const data = {
+            user_email: userEmail,
+            user_id: user.uid,
+            user_name: name[0],
+          };
+          setDoc(doc(db, "users", name[0]), data);
+          console.log(data);
+          console.log("user added successfully!");
+        } else {
+          console.log("Document already exist, data:");
+        }
+      }
+    });
+    return () => stopListener();
+  }, []);
+
   // Handle the end of the game when someone reaches 3 points
   useEffect(() => {
     if (playerScore === 3) {
@@ -119,7 +127,7 @@ const ArenaGame = () => {
   // Post game data to Firestore
   const postToFirestore = (playerScore, computerScore, gameResult) => {
     const parentCollectionName = "users";
-    const parentDocumentId = "lala"; // will change to current active user
+    const parentDocumentId = user_name;
     const subcollectionName = "games";
 
     const parentDocRef = doc(db, parentCollectionName, parentDocumentId);
@@ -164,8 +172,12 @@ const ArenaGame = () => {
     setIsScoreVisible(false); // Hide the score
   };
 
+  //define navigation
+  const navigation = useNavigation();
+
   // Navigate to history
   const handleHistory = () => {
+    navigation.navigate("History");
     console.log("Navigate to history");
   };
 

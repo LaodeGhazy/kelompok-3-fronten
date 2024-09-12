@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
 import { View, Pressable, StyleSheet, Text, Image, ImageBackground } from "react-native";
-// import { useNavigation } from '@react-navigation/native';
-
-// const navigation = useNavigation()
+import { useNavigation } from '@react-navigation/native';
 
 export default function RegisterSukses() {
+  const navigation = useNavigation()
   return (
     <View style = {styles.container}>
       <ImageBackground  
