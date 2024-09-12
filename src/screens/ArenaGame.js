@@ -35,6 +35,12 @@ const ArenaGame = () => {
   const [isSettingsPopupVisible, setIsSettingsPopupVisible] = useState(false); // SettingsPopup state
   const auth = FIREBASE_AUTH;
 
+
+  //close modal tanpa sentuh
+  const closeModal = () => {
+    setIsSettingsPopupVisible(false)
+  }
+  
   // Handle Play button press
   const handlePlayButtonPress = () => {
     setIsPlayButtonPressed(true);
@@ -172,12 +178,10 @@ const ArenaGame = () => {
     setIsScoreVisible(false); // Hide the score
   };
 
-  //define navigation
-  const navigation = useNavigation();
-
   // Navigate to history
+  const navigation = useNavigation()
   const handleHistory = () => {
-    navigation.navigate("History");
+    navigation.navigate('History')
     console.log("Navigate to history");
   };
 
@@ -188,8 +192,15 @@ const ArenaGame = () => {
     setIsModalVisible(false);
     setIsPausePopupVisible(false); // Hide the PausePopup
     setIsPlayButtonPressed(false); // Reset the Play button
-    setIsScoreVisible(false); // Hide the score
+    setIsScoreVisible(false);
+    handleHistory()
+    // onCLose()// Hide the score
   };
+
+  //close modal to history
+  const handleClose = () => {
+    setIsModalVisible(false)
+  }
 
   return (
     <ImageBackground
@@ -307,8 +318,9 @@ const ArenaGame = () => {
         visible={isModalVisible}
         onPlayAgain={handlePlayAgain}
         onHistory={handleHistory}
-        onExit={handleExit} // Pass handleExit here
+        // onExit={handleExit} // Pass handleExit here
         isPlayerWin={isPlayerWin}
+        onClose={handleExit}
       />
 
       {/* PausePopup */}
@@ -320,10 +332,12 @@ const ArenaGame = () => {
       />
 
       {/* SettingsPopup */}
-      <SettingsPopup
-        visible={isSettingsPopupVisible}
-        onClose={handleCloseSettingsPopup}
-      />
+      {/* <TouchableWithoutFeedback onPress={closeModal}> */}
+        <SettingsPopup
+          visible={isSettingsPopupVisible}
+          onClose={handleCloseSettingsPopup}
+        />
+      {/* </TouchableWithoutFeedback> */}
     </ImageBackground>
   );
 };

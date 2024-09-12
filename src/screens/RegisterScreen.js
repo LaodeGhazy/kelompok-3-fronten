@@ -2,9 +2,17 @@ import React, {useState} from 'react';
 import { TextInput, View, Pressable, StyleSheet, Text, ScrollView, Image, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from "@expo/vector-icons";
-import { FIREBASE_AUTH } from "../../firebase";
-import { createUserWithEmailAndPassword, signOut, onAuthStateChanged  } from "firebase/auth";
-
+import { createUserWithEmailAndPassword  } from "firebase/auth";
+import { FIREBASE_AUTH, googleProvider } from "../../firebase";
+import {
+  useFonts,
+  Mitr_400Regular,
+  Mitr_500Medium,
+} from '@expo-google-fonts/mitr';
+import {
+  Inter_500Medium,
+  Inter_600SemiBold,
+} from '@expo-google-fonts/inter';
 
 
 export default function RegisterScreen() {
@@ -16,6 +24,14 @@ export default function RegisterScreen() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const navigation = useNavigation();
   const FbAuth = FIREBASE_AUTH;
+
+  let [fontsLoaded] = useFonts({
+    Mitr_400Regular,
+    Mitr_500Medium,
+    Inter_500Medium, 
+    Inter_600SemiBold,
+  })
+
   const handleSubmit = () => {
     if (emailRegex.test(email)) {
       navigation.navigate('RegisterSukses')
@@ -29,33 +45,38 @@ export default function RegisterScreen() {
       <Text style={styles.errorText}>{error}</Text>
     )
   }
-  
   const SignUp = async () => {
     setLoading(true);
     try{
-        const response = await createUserWithEmailAndPassword( FbAuth, email, password);
-        navigation.navigate('RegisterSukses');
+      if (emailRegex.test(email)) {
+        const response = await createUserWithEmailAndPassword( FbAuth,email, password);
         console.log("resp: ", response);
+        navigation.navigate('RegisterSukses')
+      } else {
+          setError('Invalid email address');
+      }
     }catch(error){
         console.log(error, email, password);
-        alert("signup error: " +error.message);
+        alert("signup error: " + error.message);
     }finally {
         setLoading(false);
     }
-};
-const handleBackButtonPress = () => {
-  navigation.navigate('LandingPage'); // Navigate to the LandingPage screen
-};
-
+  }
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}>
         <View style={styles.screen}>
           <View style={styles.navbar}>
-          <TouchableOpacity style={styles.backButton} onPress={handleBackButtonPress}>
-        <Image source={require('../assets/img_back_login.png')} style={styles.backIcon} />
-      </TouchableOpacity>
+            <Pressable
+              onPress={() => navigation.navigate('LandingPage')} 
+            >
+              <Ionicons 
+                name='arrow-back-circle-outline'
+                size={40}
+                color={'white'}
+              />
+            </Pressable>
             <Text style={styles.navbarTitle}>Join With Us!</Text>
           </View>
           <View style={styles.containerAtas}>
@@ -74,7 +95,7 @@ const handleBackButtonPress = () => {
                 // onChangeText={onChangeText}
                 // value={text}
               />
-              <View>
+              <View style={styles.errorContainer}>
                 <TextInput
                   style={styles.inputEmail}
                   placeholder='Enter your email'
@@ -89,17 +110,19 @@ const handleBackButtonPress = () => {
                 style={styles.input}
                 placeholder='Enter your password'
                 secureTextEntry={true}
-                onChangeText ={(text) => setPassword(text)}
+                value={password}
+                onChangeText={setPassword}
               />
               <Pressable 
+                onPress={SignUp}
                 style={styles.wrapperCustom}>
-                <Text style={styles.text} onPress={() => SignUp()}>Register</Text>
+                <Text style={styles.textBtn}>Register</Text>
               </Pressable>
           </View>  
         </ScrollView>    
     </KeyboardAvoidingView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container:{
@@ -125,8 +148,14 @@ const styles = StyleSheet.create({
   },
   navbarTitle:{
     fontSize: 30,
-    fontWeight: 'bold',
-    color:'white'
+    color:'white',
+    fontFamily: 'Mitr_500Medium',
+    shadowOffset: {
+      width: 2, 
+      height: 7
+    },
+    shadowRadius: 8,
+    shadowOpacity: 0.3,
   },
   containerAtas:{
     justifyContent:'center',
@@ -144,38 +173,54 @@ const styles = StyleSheet.create({
   },
   containerRegister:{
     backgroundColor: '#ede8e8',
-    // flex: 2,
+    paddingHorizontal: 30,
     justifyContent:'center',
     alignItems: 'center',
-    // gap: 20,
   },
   input: {
-    height: 40,
-    width: 180,
-    margin: 15,
-    borderWidth: 1,
-    padding: 10,
+    width: '100%',
+    backgroundColor: '#F5F5F5',
     borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    fontSize: 16,
+    fontFamily: 'Inter_500Medium',
+    color: '#333',
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#F5F5F5',
+  },
+  errorContainer:{
+    width: '100%',
+    marginBottom: 15,
   },
   inputEmail: {
-    height: 40,
-    width: 180,
-    borderWidth: 1,
-    padding: 10,
+    width: '100%',
+    backgroundColor: '#F5F5F5',
     borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    fontSize: 16,
+    fontFamily: 'Inter_500Medium',
+    color: '#333',
+    borderWidth: 1,
+    borderColor: '#F5F5F5',
   },
   errorText: {
     color: 'red',
-    marginTop: 3
+    marginTop: 3,
+    fontFamily: 'Inter_600SemiBold'
   },
-  text: {
-    fontSize: 16,
+  textBtn: {
+    color: '#000',
+    fontSize: 18,
+    fontFamily: 'Mitr_400Regular',
   },
   wrapperCustom: {
     borderRadius: 8,
-    padding: 10,
+    padding: 5,
     backgroundColor:'#75b4ac',
-    width: 180,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 15,

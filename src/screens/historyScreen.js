@@ -69,9 +69,11 @@ export default function HistoryScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.navbar}>
-        <Pressable onPress={() => navigation.navigate("RegisterScreen")}>
-          <Ionicons
-            name="arrow-back-circle-outline"
+        <Pressable
+          onPress={() => navigation.navigate('ArenaGame')} //tombol back
+        >
+          <Ionicons 
+            name='arrow-back-circle-outline'
             size={40}
             color={"white"}
           />

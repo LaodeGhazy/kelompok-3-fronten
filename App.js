@@ -29,24 +29,26 @@ function App() {
          component={Login}
          options={{ headerShown: false }}
        />
-       <Stack.Screen name='History' component={HistoryScreen}
+        <Stack.Screen 
+          name='History'
+          component={HistoryScreen}
           options={{
             headerShown: false
           }}
         />
-                <Stack.Screen name='RegisterScreen' component={RegisterScreen}
+        <Stack.Screen name='RegisterScreen' component={RegisterScreen}
           options={{
             headerShown: false
           }}
         />
-                <Stack.Screen name="RegisterSukses" component={RegisterSukses} 
+          <Stack.Screen name="RegisterSukses" component={RegisterSukses} 
           options={{
             headerShown: false
           }}
         />
       </Stack.Navigator>
     </NavigationContainer>
-  );
+  )
 }
 
 export default App;
