@@ -13,7 +13,7 @@ export default function HistoryScreen() {
     <View style={styles.screen}>
       <View style={styles.navbar}>
         <Pressable
-          onPress={() => navigation.navigate('RegisterScreen')} //tombol back
+          onPress={() => navigation.navigate('ArenaGame')} //tombol back
         >
           <Ionicons 
             name='arrow-back-circle-outline'

@@ -1,10 +1,9 @@
 import React, {useState} from 'react';
 import { View, Pressable, StyleSheet, Text, Image, ImageBackground } from "react-native";
-// import { useNavigation } from '@react-navigation/native';
-
-// const navigation = useNavigation()
+import { useNavigation } from '@react-navigation/native';
 
 export default function RegisterSukses() {
+  const navigation = useNavigation()
   return (
     <View style = {styles.container}>
       <ImageBackground  
@@ -23,7 +22,7 @@ export default function RegisterSukses() {
         <Text style = {styles.congrats}>CONGRATULATION!!!</Text>
         <Text style = {styles.noteSukses}>Your account has been successfully created</Text>
         <Pressable 
-          // onPress = {() => navigation.navigate('HomeScreen')}
+          onPress = {() => navigation.navigate('LandingPage')}
           style = {styles.continueBtn}>
           <Text style = {styles.continue}>Continue</Text>
         </Pressable>
