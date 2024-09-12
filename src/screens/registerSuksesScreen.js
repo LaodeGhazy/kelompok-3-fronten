@@ -1,35 +1,35 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { View, Pressable, StyleSheet, Text, Image, ImageBackground } from "react-native";
-// import { useNavigation } from '@react-navigation/native';
-
-// const navigation = useNavigation()
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 export default function RegisterSukses() {
+  const navigation = useNavigation(); // Initialize the navigation
+
   return (
-    <View style = {styles.container}>
+    <View style={styles.container}>
       <ImageBackground  
         source={require('../../assets/berhasilBackground.png')} 
-        style = {styles.imageBg}
-        resizeMode = 'cover'
+        style={styles.imageBg}
+        resizeMode='cover'
       >
-        <View style = {styles.logoContainer}>
+        <View style={styles.logoContainer}>
             <Image 
               source={require('../../assets/berhasilRegisLogo.png')}
-              style = {styles.image}
+              style={styles.image}
             />
         </View>
       </ImageBackground>
-      <View style = {styles.pesanContainer}>
-        <Text style = {styles.congrats}>CONGRATULATION!!!</Text>
-        <Text style = {styles.noteSukses}>Your account has been successfully created</Text>
+      <View style={styles.pesanContainer}>
+        <Text style={styles.congrats}>CONGRATULATION!!!</Text>
+        <Text style={styles.noteSukses}>Your account has been successfully created</Text>
         <Pressable 
-          // onPress = {() => navigation.navigate('HomeScreen')}
-          style = {styles.continueBtn}>
-          <Text style = {styles.continue}>Continue</Text>
+          onPress={() => navigation.navigate('ArenaGame')} // Navigate to ArenaGame screen
+          style={styles.continueBtn}>
+          <Text style={styles.continue}>Continue</Text>
         </Pressable>
       </View>
     </View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -49,13 +49,13 @@ const styles = StyleSheet.create({
     width: 200,
     height: 150
   },
-  pesanContainer :{
+  pesanContainer: {
     justifyContent: 'center',
     alignItems: 'center',
     gap: 50,
     padding: 20
   },
-  continueBtn :{
+  continueBtn: {
     backgroundColor: '#75b4ac',
     borderRadius: 8,
     padding: 8,
@@ -91,4 +91,4 @@ const styles = StyleSheet.create({
     fontWeight: 'medium',
     color: '#75b4ac',
   },
-})
+});

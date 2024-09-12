@@ -31,7 +31,7 @@ const LandingPage = ({ navigation }) => {
 
           <TouchableOpacity
             style={styles.registerButton}
-            onPress={() => navigation.navigate('ArenaGame')} // Asumsi ada halaman Register
+            onPress={() => navigation.navigate('RegisterScreen')} // Asumsi ada halaman Register
           >
             <Text style={styles.registerButtonText}>REGISTER</Text>
           </TouchableOpacity>

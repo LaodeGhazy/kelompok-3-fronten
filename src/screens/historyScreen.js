@@ -57,7 +57,8 @@ const styles = StyleSheet.create({
   },
   iconContainer:{
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop:-120,
   },
   historyContainer:{
     // margin: 35,

@@ -1,9 +1,10 @@
-// components/GameOver.js
-
 import React from 'react';
 import { View, Modal, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
-const GameOver = ({ visible, onPlayAgain, onHistory, onExit, isPlayerWin }) => {
+const GameOver = ({ visible, onPlayAgain, onExit, isPlayerWin }) => {
+  const navigation = useNavigation(); // Initialize navigation
+
   return (
     <Modal
       visible={visible}
@@ -22,7 +23,10 @@ const GameOver = ({ visible, onPlayAgain, onHistory, onExit, isPlayerWin }) => {
             {/* Action Buttons in a Row */}
             <View style={styles.actionsRow}>
               {/* History Button */}
-              <TouchableOpacity style={styles.actionButton} onPress={onHistory}>
+              <TouchableOpacity 
+                style={styles.actionButton} 
+                onPress={() => navigation.navigate('History')} // Navigate to History screen
+              >
                 <Image source={require('../assets/img_leaderboard.png')} style={styles.actionIcon} />
                 <Text style={styles.actionText}>History</Text>
               </TouchableOpacity>
