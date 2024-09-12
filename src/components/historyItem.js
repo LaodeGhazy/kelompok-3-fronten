@@ -6,9 +6,10 @@ import { format } from "date-fns";
 const Stack = createNativeStackNavigator();
 
 export default function HistoryItem({item}) {
-  const ikonStatus = item.status == 'win' ? require('../../assets/win.png') : require('../../assets/lose.png') 
-  const date = format(new Date(item.createdAt), 'yyyy/MM/dd')
-  const time = format(new Date(item.createdAt), 'HH:mm')
+  const ikonStatus = item.result == true ? require('../../assets/win.png') : require('../../assets/lose.png') 
+  const gameResult = item.result == true ? "Win" : "Lose";
+  const date = format(new Date(item.date), 'yyyy/MM/dd')
+  const time = format(new Date(item.date), 'HH:mm')
   
   return (
       <View style = {styles.contentHistory}>
@@ -16,8 +17,8 @@ export default function HistoryItem({item}) {
           source={ ikonStatus } 
           style = {styles.image}
         />
-        <Text style = {styles.winlose}>{item.status}</Text>
-        <Text style = {styles.skor}>{item.skorPlayer}:{item.skorLawan}</Text>
+        <Text style = {styles.winlose}>{gameResult}</Text>
+        <Text style = {styles.skor}>{item.score}:{item.computer_score}</Text>
         <View style ={styles.dateContainer}>
           <Text style ={styles.date}>{date}</Text>
           <Text style ={styles.hours}>{time}</Text>
