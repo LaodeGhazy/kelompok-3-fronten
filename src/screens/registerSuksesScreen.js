@@ -4,7 +4,6 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 
 export default function RegisterSukses() {
   const navigation = useNavigation(); // Initialize the navigation
-
   return (
     <View style={styles.container}>
       <ImageBackground  

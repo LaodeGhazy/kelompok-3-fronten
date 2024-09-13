@@ -7,11 +7,13 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import GameOver from "../components/GameOver";
 import PausePopup from "../components/PausePopup";
 import SettingsPopup from "../components/SettingsPopup"; // Import SettingsPopup
-import { collection, setDoc, doc } from "firebase/firestore";
-import { db } from "../../firebase";
+import { collection, getDoc, setDoc, doc } from "firebase/firestore";
+import { FIREBASE_AUTH, db } from "../../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 const ArenaGame = () => {
   const [isPlayButtonPressed, setIsPlayButtonPressed] = useState(false);
@@ -24,13 +26,21 @@ const ArenaGame = () => {
   );
   const [playerScore, setPlayerScore] = useState(0);
   const [computerScore, setComputerScore] = useState(0);
+  const [user_name, setUsername] = useState("");
 
   // Modal state
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isPlayerWin, setIsPlayerWin] = useState(false);
   const [isPausePopupVisible, setIsPausePopupVisible] = useState(false); // PausePopup state
   const [isSettingsPopupVisible, setIsSettingsPopupVisible] = useState(false); // SettingsPopup state
+  const auth = FIREBASE_AUTH;
 
+
+  //close modal tanpa sentuh
+  const closeModal = () => {
+    setIsSettingsPopupVisible(false)
+  }
+  
   // Handle Play button press
   const handlePlayButtonPress = () => {
     setIsPlayButtonPressed(true);
@@ -75,6 +85,38 @@ const ArenaGame = () => {
     }
   };
 
+  // handle onauthstatechange
+  useEffect(() => {
+    const stopListener = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userEmail = user.email;
+        const name = userEmail.split("@");
+        setUsername(name[0]);
+        console.log("test:", userEmail);
+        console.log(name[0]);
+
+        const docRef = doc(db, "users", user_name);
+        console.log(docRef);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists) {
+          console.log("Document does not exist, creating...");
+          const data = {
+            user_email: userEmail,
+            user_id: user.uid,
+            user_name: name[0],
+          };
+          setDoc(doc(db, "users", name[0]), data);
+          console.log(data);
+          console.log("user added successfully!");
+        } else {
+          console.log("Document already exist, data:");
+        }
+      }
+    });
+    return () => stopListener();
+  }, []);
+
   // Handle the end of the game when someone reaches 3 points
   useEffect(() => {
     if (playerScore === 3) {
@@ -91,7 +133,7 @@ const ArenaGame = () => {
   // Post game data to Firestore
   const postToFirestore = (playerScore, computerScore, gameResult) => {
     const parentCollectionName = "users";
-    const parentDocumentId = "lala"; // will change to current active user
+    const parentDocumentId = user_name;
     const subcollectionName = "games";
 
     const parentDocRef = doc(db, parentCollectionName, parentDocumentId);
@@ -137,7 +179,9 @@ const ArenaGame = () => {
   };
 
   // Navigate to history
+  const navigation = useNavigation()
   const handleHistory = () => {
+    navigation.navigate('History')
     console.log("Navigate to history");
   };
 
@@ -148,8 +192,15 @@ const ArenaGame = () => {
     setIsModalVisible(false);
     setIsPausePopupVisible(false); // Hide the PausePopup
     setIsPlayButtonPressed(false); // Reset the Play button
-    setIsScoreVisible(false); // Hide the score
+    setIsScoreVisible(false);
+    handleHistory()
+    // onCLose()// Hide the score
   };
+
+  //close modal to history
+  const handleClose = () => {
+    setIsModalVisible(false)
+  }
 
   return (
     <ImageBackground
@@ -183,7 +234,7 @@ const ArenaGame = () => {
           <View style={styles.scoreContainer}>
             <View style={styles.scoreLabelContainer}>
               <View style={styles.scoreBox}>
-                <Text style={styles.scoreText}>Player 1</Text>
+                <Text style={styles.scoreText}>{user_name}</Text>
               </View>
               <Text style={styles.scoreNumber}>{playerScore}</Text>
             </View>
@@ -267,8 +318,9 @@ const ArenaGame = () => {
         visible={isModalVisible}
         onPlayAgain={handlePlayAgain}
         onHistory={handleHistory}
-        onExit={handleExit} // Pass handleExit here
+        // onExit={handleExit} // Pass handleExit here
         isPlayerWin={isPlayerWin}
+        onClose={handleExit}
       />
 
       {/* PausePopup */}
@@ -280,10 +332,12 @@ const ArenaGame = () => {
       />
 
       {/* SettingsPopup */}
-      <SettingsPopup
-        visible={isSettingsPopupVisible}
-        onClose={handleCloseSettingsPopup}
-      />
+      {/* <TouchableWithoutFeedback onPress={closeModal}> */}
+        <SettingsPopup
+          visible={isSettingsPopupVisible}
+          onClose={handleCloseSettingsPopup}
+        />
+      {/* </TouchableWithoutFeedback> */}
     </ImageBackground>
   );
 };

@@ -1,9 +1,21 @@
-import React from 'react';
-import { Modal, View, StyleSheet, TouchableOpacity, Text, BackHandler } from 'react-native';
+import React, { useState } from 'react';
+import { Modal, View, StyleSheet, TouchableOpacity, Text, BackHandler, TouchableWithoutFeedback } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const SettingsPopup = ({ visible, onResume, onRestart, onExit }) => {
+const SettingsPopup = ({ visible, onClose, onExit }) => {
   const navigation = useNavigation();
+  const [isModalVisible, setIsModalVisible] = useState(false)
+
+  const closeModal = () =>{
+    setIsModalVisible(false)
+  }
+  // go to screen history dan close modal
+  const handleHistory = () => {
+    navigation.navigate('History')
+    if(onClose){
+      onClose()
+    }
+  }
 
   const handleExitGame = () => {
     BackHandler.exitApp(); // Close the app
@@ -24,19 +36,21 @@ const SettingsPopup = ({ visible, onResume, onRestart, onExit }) => {
       animationType="fade"
       onRequestClose={onExit}
     >
-      <View style={styles.overlay}>
-        <View style={styles.popup}>
-          <TouchableOpacity style={styles.card} onPress={onResume}>
-            <Text style={styles.buttonText}>History</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.card} onPress={handleExitGame}>
-            <Text style={styles.buttonText}>ExitGame</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.exitCard} onPress={handleLogout}>
-            <Text style={styles.buttonText}>Logout</Text>
-          </TouchableOpacity>
+      <TouchableWithoutFeedback onPress={closeModal}>
+        <View style={styles.overlay}>
+          <View style={styles.popup}>
+            <TouchableOpacity style={styles.card} onPress={handleHistory}>
+              <Text style={styles.buttonText}>History</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.card} onPress={handleExitGame}>
+              <Text style={styles.buttonText}>ExitGame</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.exitCard} onPress={handleLogout}>
+              <Text style={styles.buttonText}>Logout</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     </Modal>
   );
 };

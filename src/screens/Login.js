@@ -9,12 +9,52 @@ import {
   Dimensions
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
-import { FIREBASE_AUTH, auth, googleProvider } from "../../firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, signOut  } from "firebase/auth";
+import { FIREBASE_AUTH, googleProvider } from "../../firebase";
+import { signInWithEmailAndPassword, signInWithPopup, signOut  } from "firebase/auth";
+import { Ionicons } from "@expo/vector-icons";
+import {
+  useFonts,
+  Mitr_200ExtraLight,
+  Mitr_300Light,
+  Mitr_400Regular,
+  Mitr_500Medium,
+  Mitr_600SemiBold,
+  Mitr_700Bold,
+} from '@expo-google-fonts/mitr';
+import {
+  Inter_100Thin,
+  Inter_200ExtraLight,
+  Inter_300Light,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  Inter_800ExtraBold,
+  Inter_900Black,
+} from '@expo-google-fonts/inter';
 
 const { width, height } = Dimensions.get('window');
 
 const Login = () => {
+  //font 
+  let [fontsLoaded] = useFonts({
+    Mitr_200ExtraLight,
+    Mitr_300Light,
+    Mitr_400Regular,
+    Mitr_500Medium,
+    Mitr_600SemiBold,
+    Mitr_700Bold,
+    Inter_100Thin,
+    Inter_200ExtraLight,
+    Inter_300Light,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    Inter_800ExtraBold,
+    Inter_900Black,
+  })
+  
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState('');
   const [ password, setPassword ] = useState('');
@@ -35,32 +75,20 @@ const Login = () => {
     }finally {
         setLoading(false);
     }
-};
-const googleSignin = async () => {
-  try {
-      if(user) {
-          await signOut(FbAuth)
-      }else {
-          await signInWithPopup(FbAuth, googleProvider);
-      } 
-  }catch(error) {
-      console.error(error);
-  }
-};
+  };
 
-const SignUp = async () => {
-    setLoading(true);
-    try{
-        const response = await createUserWithEmailAndPassword( FbAuth,email, password);
-        console.log("resp: ", response);
-        navigation.navigate('LandingPage');
-    }catch(error){
-        console.log(error, email, password);
-        alert("signup error: " +error.message);
-    }finally {
-        setLoading(false);
+
+  const googleSignin = async () => {
+    try {
+        if(user) {
+            await signOut(FbAuth)
+        }else {
+            await signInWithPopup(FbAuth, googleProvider);
+        } 
+    }catch(error) {
+        console.error(error);
     }
-};
+  };
 
   const navigation = useNavigation(); // Initialize useNavigation
 
@@ -77,102 +105,112 @@ const SignUp = async () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.backgroundShape} />
-      {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={handleBackButtonPress}>
-        <Image source={require('../assets/img_back_login.png')} style={styles.backIcon} />
-      </TouchableOpacity>
+      <View style={styles.screen}>
+        <View style={styles.navbar}>
+          {/* Back Button */}
+          <TouchableOpacity style={styles.backButton} onPress={handleBackButtonPress}>
+            <Ionicons 
+              name='arrow-back-circle-outline'
+              size={40}
+              color={'white'}
+            />
+          </TouchableOpacity>
+          {/* Title and Image */}
+          <Text style={styles.title}>Play with Us!</Text>
+        </View>
+        <View style={styles.containerAtas}>
+            <Image
+              source={require('../assets/img_login_char.png')}
+              style={styles.image}
+            ></Image>
+          </View>
+      </View>   
+      <View style={styles.containerLogin}>
+        {/* Email and Password Inputs */}
+        {/* Display error message if email is invalid */}
+        {!isEmailValid && (
+          <Text style={styles.errorText}>Invalid Email Address</Text>
+        )}
+        <TextInput
+          placeholder="Enter Your email"
+          placeholderTextColor="#C4C4C4"
+          keyboardType="email-address"
+          style={[styles.input, !isEmailValid && styles.invalidInput]}
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+        />
+        <TextInput
+          placeholder="Enter Your Password"
+          placeholderTextColor="#C4C4C4"
+          secureTextEntry
+          style={styles.input}
+          onChangeText ={(text) => setPassword(text)}
+        />
 
-      {/* Title and Image */}
-      <Text style={styles.title}>Play with Us!</Text>
-      <Image source={require('../assets/img_login_char.png')} style={styles.avatar} />
+        {/* Login Button */}
+        <TouchableOpacity style={styles.loginButton} onPress={() => SignIn()}>
+          <Text style={styles.loginButtonText}>Login</Text>
+        </TouchableOpacity>
 
-      {/* Email and Password Inputs */}
-      {/* Display error message if email is invalid */}
-      {!isEmailValid && (
-        <Text style={styles.errorText}>Invalid Email Address</Text>
-      )}
-      <TextInput
-        placeholder="Enter Your email"
-        placeholderTextColor="#C4C4C4"
-        style={[styles.input, !isEmailValid && styles.invalidInput]}
-        value={email}
-        onChangeText={(text) => setEmail(text)}
-      />
-      <TextInput
-        placeholder="Enter Your Password"
-        placeholderTextColor="#C4C4C4"
-        secureTextEntry
-        style={styles.input}
-        onChangeText ={(text) => setPassword(text)}
-      />
+        {/* OR divider */}
+        <View style={styles.orContainer}>
+          <View style={styles.line} />
+          <Text style={styles.orText}>OR</Text>
+          <View style={styles.line} />
+        </View>
 
-      {/* Login Button */}
-      <TouchableOpacity style={styles.loginButton} onPress={() => SignIn()}>
-        <Text style={styles.loginButtonText}>Login</Text>
-      </TouchableOpacity>
-
-      {/* OR divider */}
-      <View style={styles.orContainer}>
-        <View style={styles.line} />
-        <Text style={styles.orText}>OR</Text>
-        <View style={styles.line} />
+        {/* Google Login Button */}
+        <TouchableOpacity style={styles.googleButton} onPress={() => googleSignin()}>
+          <Image source={require('../assets/img_google.png')} style={styles.googleIcon} />
+          <Text style={styles.googleButtonText}>Continue with Google</Text>
+        </TouchableOpacity>
       </View>
-
-      {/* Google Login Button */}
-      <TouchableOpacity style={styles.googleButton} onPress={() => googleSignin()}>
-        <Image source={require('../assets/img_google.png')} style={styles.googleIcon} />
-        <Text style={styles.googleButtonText}>Continue with Google</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ECF0F1',
-    alignItems: 'center',
-    paddingHorizontal: 30,
-  },
+  container:{
+    flex:1,
+    backgroundColor: '#ede8e8',
 
-  backgroundShape: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: width,
-    height: height * 0.44,
-    backgroundColor: '#75B4AC',
-    borderBottomRightRadius: 50,
-    borderBottomLeftRadius: 50,
-    zIndex: -1,
   },
-  backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
+  screen:{
+    flex: 0.6,
+    backgroundColor: '#75b4ac',
+    borderBottomLeftRadius: 35,
+    borderBottomRightRadius: 35,
+    paddingTop: 75,
+    paddingHorizontal: 30,
+    justifyContent: 'space-between',
   },
-  backIcon: {
-    width: 30,
-    height: 30,
-    resizeMode: 'contain',
+  navbar:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 40
+  },
+  containerAtas:{
+    justifyContent:'center',
+    alignItems: 'center',
   },
   title: {
-    fontSize: 27,
-    fontWeight: 'bold',
-    marginTop: 80,
-    marginBottom: 15,
+    fontSize: 30,
+    color:'white',
+    fontFamily: 'Mitr_500Medium',
     color: '#FFFFFF',
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 10,
   },
-
   avatar: {
-    width: 450,
-    height: 250,
-    resizeMode: 'contain',
-    marginBottom: 30,
+    marginBottom: -50,
+  },
+  containerLogin:{
+    backgroundColor: '#ede8e8',
+    paddingHorizontal: 30,
+    paddingTop: 35,
+    justifyContent:'center',
+    alignItems: 'center',
   },
   input: {
     width: '100%',
@@ -181,6 +219,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     fontSize: 16,
+    fontFamily: 'Inter_500Medium',
     color: '#333',
     marginBottom: 15,
     borderWidth: 1,
@@ -194,12 +233,13 @@ const styles = StyleSheet.create({
     color: '#E52727', // Warna teks error
     fontSize: 14,
     marginBottom: 5,
+    fontFamily: 'Inter_600SemiBold',
     alignSelf: 'flex-start', // Agar teks berada di atas input field
   },
   loginButton: {
     width: '100%',
     backgroundColor: '#75B4AC',
-    paddingVertical: 12,
+    paddingVertical: 9,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 10,
@@ -212,7 +252,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#000',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'Mitr_400Regular',
   },
   orContainer: {
     flexDirection: 'row',
@@ -254,7 +294,8 @@ const styles = StyleSheet.create({
   },
   googleButtonText: {
     color: '#75B4AC',
-    fontSize: 16,
+    fontSize: 15,
+    fontFamily: 'Mitr_300Light',
   },
 });
 

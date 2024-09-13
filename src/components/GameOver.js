@@ -5,6 +5,14 @@ import { useNavigation } from '@react-navigation/native'; // Import useNavigatio
 const GameOver = ({ visible, onPlayAgain, onExit, isPlayerWin }) => {
   const navigation = useNavigation(); // Initialize navigation
 
+const GameOver = ({ visible, onPlayAgain, onHistory, onExit, isPlayerWin, onClose }) => {
+  const navigation = useNavigation()
+  const closeModal = () => {
+    if(onClose){
+      onClose()
+      navigation.navigate('History')
+    }
+  }
   return (
     <Modal
       visible={visible}
@@ -23,10 +31,7 @@ const GameOver = ({ visible, onPlayAgain, onExit, isPlayerWin }) => {
             {/* Action Buttons in a Row */}
             <View style={styles.actionsRow}>
               {/* History Button */}
-              <TouchableOpacity 
-                style={styles.actionButton} 
-                onPress={() => navigation.navigate('History')} // Navigate to History screen
-              >
+              <TouchableOpacity style={styles.actionButton} onPress={onClose}>
                 <Image source={require('../assets/img_leaderboard.png')} style={styles.actionIcon} />
                 <Text style={styles.actionText}>History</Text>
               </TouchableOpacity>

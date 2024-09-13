@@ -10,52 +10,70 @@ import {
 } from "react-native";
 import HistoryItem from "../components/historyItem";
 import { Ionicons } from "@expo/vector-icons";
-import { collection, doc, getDoc, getDocs, query, orderBy } from "firebase/firestore";
-import { db } from "../../firebase";
-
-// import RegisterScreen from "./RegisterScreen";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  orderBy,
+} from "firebase/firestore";
+import { db, FIREBASE_AUTH } from "../../firebase";
+import { useNavigation } from "@react-navigation/native";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function HistoryScreen() {
-  
+  const navigation = useNavigation();
+
   const [games, setGames] = useState([]); // Initial empty array of game history
 
+  const auth = FIREBASE_AUTH;
   useEffect(() => {
-    async function fetchData() {
-      const parentCollectionName = "users";
-      const parentDocumentId = "lala"; // will change to current active user
-      const subcollectionName = "games";
+    const stopListener = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userEmail = user.email;
+        const name = userEmail.split("@");
+        console.log("test:", userEmail);
+        console.log(name[0]);
 
-      const parentDocRef = doc(db, parentCollectionName, parentDocumentId);
+        const parentCollectionName = "users";
+        const subcollectionName = "games";
+        const parentDocumentId = name[0];
+        const parentDocRef = doc(db, parentCollectionName, parentDocumentId);
 
-      const docSnapshot = await getDoc(parentDocRef);
+        const docSnapshot = await getDoc(parentDocRef);
 
-      if (docSnapshot.exists) {
-        const subcollectionRef = collection(parentDocRef, subcollectionName);
+        if (docSnapshot.exists) {
+          const subcollectionRef = collection(parentDocRef, subcollectionName);
 
-        const subcollectionQuery = query(subcollectionRef, orderBy('date', 'desc'));
+          const subcollectionQuery = query(
+            subcollectionRef,
+            orderBy("date", "desc")
+          );
 
-        const fetchedGames = [];
-        const subcollectionQuerySnapshot = await getDocs(subcollectionQuery);
-        subcollectionQuerySnapshot.forEach((subdoc) => {
-          console.log(subdoc.id, "=>", subdoc.data());
-          fetchedGames.push(subdoc.data());
-        });
-        setGames(fetchedGames);
-      } else {
-        console.log("Document does not exist");
+          const fetchedGames = [];
+          const subcollectionQuerySnapshot = await getDocs(subcollectionQuery);
+          subcollectionQuerySnapshot.forEach((subdoc) => {
+            console.log(subdoc.id, "=>", subdoc.data());
+            fetchedGames.push(subdoc.data());
+          });
+          setGames(fetchedGames);
+        } else {
+          console.log("Document does not exist");
+        }
       }
-    }
-    fetchData();
+    });
+    return () => stopListener();
   }, [db]);
 
   return (
     <View style={styles.screen}>
       <View style={styles.navbar}>
         <Pressable
-          onPress={() => navigation.navigate("RegisterScreen")} //tombol back
+          onPress={() => navigation.navigate('ArenaGame')} //tombol back
         >
-          <Ionicons
-            name="arrow-back-circle-outline"
+          <Ionicons 
+            name='arrow-back-circle-outline'
             size={40}
             color={"white"}
           />
