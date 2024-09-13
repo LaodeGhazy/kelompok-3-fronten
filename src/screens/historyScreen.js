@@ -111,9 +111,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
-  iconContainer: {
-    justifyContent: "center",
-    alignItems: "center",
+  iconContainer:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop:-120,
   },
   historyContainer: {
     // margin: 35,
