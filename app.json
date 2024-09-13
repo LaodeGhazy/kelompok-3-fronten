@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "FinalProject-FrontEnd",
-    "slug": "rock-paper-scissors",
+    "slug": "kelompok3",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/splash.png",
@@ -29,9 +29,9 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "d7f2eaa4-2851-4054-9ef0-96a5cc9aa1bd"
+        "projectId": "9e8a496e-277d-46cb-a0e6-24ee9afce52f"
       }
     },
-    "owner": "nadhifa.aqila"
+    "owner": "laodeghazy"
   }
 }

@@ -2,8 +2,7 @@ import React from 'react';
 import { View, Modal, TouchableOpacity, Image, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
-const GameOver = ({ visible, onPlayAgain, onExit, isPlayerWin }) => {
-  const navigation = useNavigation(); // Initialize navigation
+
 
 const GameOver = ({ visible, onPlayAgain, onHistory, onExit, isPlayerWin, onClose }) => {
   const navigation = useNavigation()

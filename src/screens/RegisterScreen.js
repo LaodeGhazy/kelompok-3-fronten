@@ -214,6 +214,7 @@ const styles = StyleSheet.create({
   textBtn: {
     color: '#000',
     fontSize: 18,
+    width: -24,
     fontFamily: 'Mitr_400Regular',
   },
   wrapperCustom: {
@@ -224,6 +225,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 15,
+    height: 50,
     shadowOffset: {
       width: 2, 
       height: 7
